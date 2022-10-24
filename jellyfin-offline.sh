@@ -2,7 +2,7 @@
 
 JELLYFIN_VERSION=10.8.5
 DOTNET_VERSION=6.0.9
-DOTNET_HOST_VERSION=6.0.8
+DOTNET_HOST_VERSION=6.0.9
 
 # Retrieve neccessary .NET NuGet packages for offline building
 tar xf jellyfin-${JELLYFIN_VERSION}.tar.gz
