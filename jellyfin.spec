@@ -2,8 +2,8 @@
 %global         debug_package %{nil}
 
 Name:           jellyfin
-Version:        10.8.5
-Release:        2%{?dist}
+Version:        10.8.6
+Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -260,6 +260,9 @@ exit 0
 
 
 %changelog
+* Sat Oct 29 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.6-1
+- Update to 10.8.6
+
 * Mon Oct 24 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.5-2
 - Rebuild for dotnet-6.0.9
 
