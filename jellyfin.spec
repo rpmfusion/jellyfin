@@ -2,7 +2,7 @@
 %global         debug_package %{nil}
 
 Name:           jellyfin
-Version:        10.8.6
+Version:        10.8.7
 Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
@@ -260,6 +260,9 @@ exit 0
 
 
 %changelog
+* Tue Nov 01 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-1
+- Update to 10.8.7
+
 * Sat Oct 29 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.6-1
 - Update to 10.8.6
 
