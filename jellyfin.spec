@@ -260,7 +260,7 @@ exit 0
 
 
 %changelog
-* Mon Oct 24 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-2
+* Sun Nov 20 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-2
 - Rebuild for dotnet-6.0.10
 
 * Tue Nov 01 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-1
