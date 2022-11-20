@@ -26,7 +26,7 @@ Source16:       %{name}-firewalld.xml
 Source17:       %{name}-server-lowports.conf
 
 # dotnet does not offer a runtime on ppc
-ExcludeArch:    %{power64} ppc64le
+ExcludeArch:    %{power64} ppc64le %{arm}
 
 %{?systemd_requires}
 BuildRequires:  systemd-rpm-macros
