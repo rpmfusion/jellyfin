@@ -3,7 +3,7 @@
 
 Name:           jellyfin
 Version:        10.8.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -260,6 +260,9 @@ exit 0
 
 
 %changelog
+* Mon Oct 24 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-2
+- Rebuild for dotnet-6.0.10
+
 * Tue Nov 01 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-1
 - Update to 10.8.7
 
