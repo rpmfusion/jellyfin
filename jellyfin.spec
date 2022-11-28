@@ -3,7 +3,7 @@
 
 Name:           jellyfin
 Version:        10.8.7
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -152,6 +152,8 @@ mv dist/*.js.LICENSE.txt ../jellyfin-%{version}/
 mv dist/libraries/*.js.LICENSE.txt ../jellyfin-%{version}/
 mkdir -p %{buildroot}%{_datadir}/
 mv dist %{buildroot}%{_datadir}/jellyfin-web/
+# allow easier usage outside service file
+ln -s %{_datadir}/jellyfin-web %{buildroot}%{_libdir}/jellyfin/jellyfin-web
 
 
 %check
@@ -237,6 +239,9 @@ exit 0
 
 
 %changelog
+* Mon Nov 28 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-5
+- Add symlink to default web location (RFBZ#6515)
+
 * Wed Nov 23 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-4
 - Drop firewalld sub-package as it is now upstream as of firewalld 1.2
 
