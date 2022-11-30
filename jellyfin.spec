@@ -2,8 +2,8 @@
 %global         debug_package %{nil}
 
 Name:           jellyfin
-Version:        10.8.7
-Release:        5%{?dist}
+Version:        10.8.8
+Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -239,6 +239,9 @@ exit 0
 
 
 %changelog
+* Wed Nov 30 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.8-1
+- Update to 10.8.8
+
 * Mon Nov 28 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.7-5
 - Add symlink to default web location (RFBZ#6515)
 
