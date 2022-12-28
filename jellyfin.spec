@@ -3,7 +3,7 @@
 
 Name:           jellyfin
 Version:        10.8.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -22,7 +22,8 @@ Source12:       %{name}.env
 Source13:       %{name}.sudoers
 Source14:       restart.sh
 Source15:       %{name}.override.conf
-Source16:       %{name}-server-lowports.conf
+Source16:       %{name}-firewalld.xml
+Source17:       %{name}-server-lowports.conf
 
 # dotnet does not offer a runtime on ppc
 ExcludeArch:    %{power64} ppc64le %{arm}
@@ -38,11 +39,23 @@ Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
 # /etc/sudoers.d/
 Requires: sudo
+Requires: (%{name}-firewalld = %{version}-%{release} if firewalld)
 
 
 %description
 Jellyfin is a free software media system that puts you in control of managing 
 and streaming your media.
+
+
+%package firewalld
+Summary: FirewallD metadata files for Jellyfin
+Requires: firewalld-filesystem
+Requires(post): firewalld-filesystem
+BuildArch:      noarch
+
+
+%description firewalld
+This package contains FirewallD files for Jellyfin.
 
 
 %package server
@@ -133,6 +146,7 @@ install -p -m 644 -D Jellyfin.Server/Resources/Configuration/logging.json %{buil
 install -p -m 644 -D %{SOURCE12} %{buildroot}%{_sysconfdir}/sysconfig/jellyfin
 
 # system config
+install -p -m 644 -D %{SOURCE16} %{buildroot}%{_prefix}/lib/firewalld/services/jellyfin.xml
 install -p -m 640 -D %{SOURCE13} %{buildroot}%{_sysconfdir}/sudoers.d/jellyfin-sudoers
 install -p -m 644 -D %{SOURCE15} %{buildroot}%{_sysconfdir}/systemd/system/jellyfin.service.d/override.conf
 install -p -m 644 -D %{SOURCE11} %{buildroot}%{_unitdir}/jellyfin.service
@@ -144,7 +158,7 @@ mkdir -p %{buildroot}%{_localstatedir}/cache/jellyfin
 mkdir -p %{buildroot}%{_localstatedir}/log/jellyfin
 
 # jellyfin-server-lowports subpackage
-install -p -m 644 -D %{SOURCE16} %{buildroot}%{_unitdir}/jellyfin.service.d/jellyfin-server-lowports.conf
+install -p -m 644 -D %{SOURCE17} %{buildroot}%{_unitdir}/jellyfin.service.d/jellyfin-server-lowports.conf
 
 cd ../%{name}-web-%{version}
 # move web licenses prior to installation
@@ -168,6 +182,11 @@ done
 
 %files
 # empty as this is just a meta-package
+
+
+%files firewalld
+%license LICENSE
+%{_prefix}/lib/firewalld/services/jellyfin.xml
 
 
 %files server
@@ -206,6 +225,10 @@ done
 %{_datadir}/jellyfin-web
 
 
+%post firewalld
+%firewalld_reload
+
+
 %pre server
 getent group jellyfin >/dev/null || groupadd -r jellyfin
 getent passwd jellyfin >/dev/null || \
@@ -239,6 +262,10 @@ exit 0
 
 
 %changelog
+* Wed Dec 28 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.8-2
+- Reintroduce firewalld package (RHBZ#6542)
+- Rebuild for dotnet-6.0.12
+
 * Wed Nov 30 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.8-1
 - Update to 10.8.8
 
