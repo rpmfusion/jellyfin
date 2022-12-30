@@ -33,7 +33,11 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
 # jellyfin-web
+%if 0%{fedora} < 38
 BuildRequires:  npm
+%else
+BuildRequires:  nodejs-npm
+%endif
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
