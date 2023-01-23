@@ -2,8 +2,8 @@
 %global         debug_package %{nil}
 
 Name:           jellyfin
-Version:        10.8.8
-Release:        2%{?dist}
+Version:        10.8.9
+Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -108,6 +108,7 @@ tar xf %{SOURCE3}
 tar xf %{SOURCE4}
 cp -p %{SOURCE5} %{name}-web-%{version}/package-lock.json
 popd
+
 
 dotnet nuget add source %{_builddir}/jellyfin-nupkgs -n jellyfin-nupkgs
 dotnet nuget add source %{_builddir}/jellyfin-nupkgs2 -n jellyfin-nupkgs2
@@ -266,6 +267,9 @@ exit 0
 
 
 %changelog
+* Sun Jan 22 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-1
+- Update to 10.8.9
+
 * Wed Dec 28 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.8-2
 - Reintroduce firewalld package (RHBZ#6542)
 - Rebuild for dotnet-6.0.12
