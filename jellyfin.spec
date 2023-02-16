@@ -1,9 +1,15 @@
 # NuGet packages are stripped packages and no debug info for .NET binaries at this time
 %global         debug_package %{nil}
+# Set .NET runtime identitfier string
+%ifarch aarch64
+%define dotnet_rid fedora.%{fedora}-arm64
+%else
+%define dotnet_rid fedora.%{fedora}-x64
+%endif
 
 Name:           jellyfin
 Version:        10.8.9
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -123,7 +129,7 @@ mkdir build-server
 dotnet publish --configuration Release \
                --output="build-server" \
                --self-contained false \
-               --runtime fedora.%{fedora}-x64 \
+               --runtime %{dotnet_rid} \
                "-p:DebugSymbols=false;DebugType=none" \
                Jellyfin.Server
 cd ../%{name}-web-%{version}
@@ -267,6 +273,9 @@ exit 0
 
 
 %changelog
+* Thu Feb 16 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-2
+- Fix runtime id for ARM build (RHBZ#6580)
+
 * Sun Jan 22 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-1
 - Update to 10.8.9
 
