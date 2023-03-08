@@ -9,7 +9,7 @@
 
 Name:           jellyfin
 Version:        10.8.9
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -35,6 +35,7 @@ Source17:       %{name}-server-lowports.conf
 ExcludeArch:    %{power64} ppc64le %{arm}
 
 %{?systemd_requires}
+BuildRequires:  firewalld-filesystem
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
@@ -240,6 +241,14 @@ done
 %firewalld_reload
 
 
+%pretrans server
+# handle upgrade path from upstream
+if [ -d %{_libdir}/jellyfin/jellyfin-web ] && [ ! -L %{_libdir}/jellyfin/jellyfin-web ]
+then
+  mv %{_libdir}/jellyfin/jellyfin-web/ %{_libdir}/jellyfin/jellyfin-web.tmp/
+fi
+
+
 %pre server
 getent group jellyfin >/dev/null || groupadd -r jellyfin
 getent passwd jellyfin >/dev/null || \
@@ -250,6 +259,21 @@ exit 0
 
 %post server
 %systemd_post jellyfin.service
+# handle upgrade path from upstream
+if [ -d %{_libdir}/jellyfin/jellyfin-web.tmp ] && [ ! -L %{_libdir}/jellyfin/jellyfin-web.tmp ]
+then
+  mv %{_libdir}/jellyfin/jellyfin-web %{_libdir}/jellyfin/jellyfin-web.tmplink
+  mv %{_libdir}/jellyfin/jellyfin-web.tmp/ %{_libdir}/jellyfin/jellyfin-web/
+fi
+
+
+%posttrans server
+# handle upgrade path from upstream
+if [ -d %{_libdir}/jellyfin/jellyfin-web ] && [ ! -L %{_libdir}/jellyfin/jellyfin-web ]
+then
+  rm -rf %{_libdir}/jellyfin/jellyfin-web/
+  mv %{_libdir}/jellyfin/jellyfin-web.tmplink %{_libdir}/jellyfin/jellyfin-web
+fi
 
 
 %preun server
@@ -273,14 +297,18 @@ exit 0
 
 
 %changelog
+* Wed Mar 08 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-3
+- Handle package upgrade path from upstream (RFBZ#6590)
+- Fix firewalld scriptlet (RFBZ#6593)
+
 * Thu Feb 16 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-2
-- Fix runtime id for ARM build (RHBZ#6580)
+- Fix runtime id for ARM build (RFBZ#6580)
 
 * Sun Jan 22 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-1
 - Update to 10.8.9
 
 * Wed Dec 28 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.8-2
-- Reintroduce firewalld package (RHBZ#6542)
+- Reintroduce firewalld package (RFBZ#6542)
 - Rebuild for dotnet-6.0.12
 
 * Wed Nov 30 2022 Michael Cronenworth <mike@cchtml.com> - 10.8.8-1
