@@ -1,0 +1,3 @@
+#Type Name     ID GECOS                   Home directory    Shell
+u     jellyfin -  "Jellyfin default user" /var/lib/jellyfin /sbin/nologin
+

@@ -8,8 +8,8 @@
 %endif
 
 Name:           jellyfin
-Version:        10.8.9
-Release:        3%{?dist}
+Version:        10.8.10
+Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -30,21 +30,19 @@ Source14:       restart.sh
 Source15:       %{name}.override.conf
 Source16:       %{name}-firewalld.xml
 Source17:       %{name}-server-lowports.conf
+Source18:       %{name}.sysusers
 
 # dotnet does not offer a runtime on ppc
 ExcludeArch:    %{power64} ppc64le %{arm}
 
 %{?systemd_requires}
+%{?sysusers_requires_compat}
 BuildRequires:  firewalld-filesystem
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
 # jellyfin-web
-%if 0%{fedora} < 38
-BuildRequires:  npm
-%else
 BuildRequires:  nodejs-npm
-%endif
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
@@ -72,7 +70,6 @@ This package contains FirewallD files for Jellyfin.
 %package server
 # RPMfusion free
 Summary:        The Free Software Media System Server backend
-Requires(pre):  shadow-utils
 Requires:       at
 Requires:       ffmpeg
 Requires:       aspnetcore-runtime-6.0
@@ -162,6 +159,7 @@ install -p -m 644 -D %{SOURCE16} %{buildroot}%{_prefix}/lib/firewalld/services/j
 install -p -m 640 -D %{SOURCE13} %{buildroot}%{_sysconfdir}/sudoers.d/jellyfin-sudoers
 install -p -m 644 -D %{SOURCE15} %{buildroot}%{_sysconfdir}/systemd/system/jellyfin.service.d/override.conf
 install -p -m 644 -D %{SOURCE11} %{buildroot}%{_unitdir}/jellyfin.service
+install -p -m 644 -D %{SOURCE18} %{buildroot}%{_sysusersdir}/jellyfin.conf
 
 # empty directories
 mkdir -p %{buildroot}%{_sharedstatedir}/jellyfin
@@ -219,6 +217,7 @@ done
 %config(noreplace) %{_sysconfdir}/sudoers.d/jellyfin-sudoers
 %dir %{_sysconfdir}/systemd/system/jellyfin.service.d/
 %config(noreplace) %{_sysconfdir}/systemd/system/jellyfin.service.d/override.conf
+%{_sysusersdir}/jellyfin.conf
 
 # empty directories
 %attr(750,jellyfin,jellyfin) %dir %{_sharedstatedir}/jellyfin
@@ -250,11 +249,7 @@ fi
 
 
 %pre server
-getent group jellyfin >/dev/null || groupadd -r jellyfin
-getent passwd jellyfin >/dev/null || \
-    useradd -r -g jellyfin -d %{_sharedstatedir}/jellyfin -s /sbin/nologin \
-    -c "Jellyfin default user" jellyfin
-exit 0
+%sysusers_create_compat %{SOURCE18}
 
 
 %post server
@@ -297,6 +292,10 @@ fi
 
 
 %changelog
+* Sun Apr 23 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.10-1
+- Update to 10.8.10
+- Switch to use systemd sysusers config for creating user and group
+
 * Wed Mar 08 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.9-3
 - Handle package upgrade path from upstream (RFBZ#6590)
 - Fix firewalld scriptlet (RFBZ#6593)
