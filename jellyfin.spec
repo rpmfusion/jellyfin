@@ -9,7 +9,7 @@
 
 Name:           jellyfin
 Version:        10.8.10
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -292,6 +292,9 @@ fi
 
 
 %changelog
+* Wed Aug 02 2023 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 10.8.10-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
 * Sun Apr 23 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.10-1
 - Update to 10.8.10
 - Switch to use systemd sysusers config for creating user and group
