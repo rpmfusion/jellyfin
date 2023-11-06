@@ -8,8 +8,8 @@
 %endif
 
 Name:           jellyfin
-Version:        10.8.11
-Release:        3%{?dist}
+Version:        10.8.12
+Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -34,8 +34,6 @@ Source18:       %{name}.sysusers
 
 # https://github.com/jellyfin/jellyfin/pull/10275
 Patch0:         %{name}-vaapi-sei.patch
-# https://github.com/jellyfin/jellyfin/issues/10272
-Patch1:         %{name}-10.8.11-playlist-revert.patch
 
 # dotnet does not offer a runtime on ppc
 ExcludeArch:    %{power64} ppc64le %{arm}
@@ -297,6 +295,9 @@ fi
 
 
 %changelog
+* Sun Nov 05 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.12-1
+- Update to 10.8.12
+
 * Sun Oct 01 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.11-3
 - Restore playlist view
 
