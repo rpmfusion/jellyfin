@@ -17,7 +17,7 @@
 
 Name:           jellyfin
 Version:        10.8.12
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -307,7 +307,7 @@ fi
 
 
 %changelog
-* Fri Nov 03 2023 Brian J. Murrell <brian@interlinx.bc.ca> - 10.8.11-4
+* Fri Nov 03 2023 Brian J. Murrell <brian@interlinx.bc.ca> - 10.8.12-2
 - Build on EL8; requires building with nodejs:16 module
 
 * Sun Nov 05 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.12-1
