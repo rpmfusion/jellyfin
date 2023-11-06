@@ -2,9 +2,17 @@
 %global         debug_package %{nil}
 # Set .NET runtime identitfier string
 %ifarch aarch64
+%if 0%{?fedora}
 %define dotnet_rid fedora.%{fedora}-arm64
 %else
+%define dotnet_rid centos.%{rhel}-arm64
+%endif
+%else
+%if 0%{?fedora}
 %define dotnet_rid fedora.%{fedora}-x64
+%else
+%define dotnet_rid centos.%{rhel}-x64
+%endif
 %endif
 
 Name:           jellyfin
@@ -45,7 +53,11 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
 # jellyfin-web
+%if 0%{?rhel} > 0 && 0%{?rhel} < 9
+BuildRequires:  npm
+%else
 BuildRequires:  nodejs-npm
+%endif
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
@@ -295,6 +307,9 @@ fi
 
 
 %changelog
+* Fri Nov 03 2023 Brian J. Murrell <brian@interlinx.bc.ca> - 10.8.11-4
+- Build on EL8; requires building with nodejs:16 module
+
 * Sun Nov 05 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.12-1
 - Update to 10.8.12
 
