@@ -53,7 +53,7 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
 # jellyfin-web
-%if 0%{?rhel} > 0 && 0%{?rhel} < 9
+%if 0%{?rhel} > 0
 BuildRequires:  npm
 %else
 BuildRequires:  nodejs-npm
@@ -309,6 +309,7 @@ fi
 %changelog
 * Fri Nov 03 2023 Brian J. Murrell <brian@interlinx.bc.ca> - 10.8.12-2
 - Build on EL8; requires building with nodejs:16 module
+- Build on EL9
 
 * Sun Nov 05 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.12-1
 - Update to 10.8.12
