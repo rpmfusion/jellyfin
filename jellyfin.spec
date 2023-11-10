@@ -175,8 +175,9 @@ install -p -m 640 -D %{SOURCE13} %{buildroot}%{_sysconfdir}/sudoers.d/jellyfin-s
 install -p -m 644 -D %{SOURCE15} %{buildroot}%{_sysconfdir}/systemd/system/jellyfin.service.d/override.conf
 install -p -m 644 -D %{SOURCE11} %{buildroot}%{_unitdir}/jellyfin.service
 # EL8's systemd doesn't support ProtectHostname and ProtectKernelLogs
+# and fails to bind if PrivateUsers=true
 %if 0%{?rhel} > 0 && 0%{?rhel} < 9
-sed -i -e '/ProtectHostname/d' -e '/ProtectKernelLogs/d'  %{buildroot}%{_unitdir}/jellyfin.service
+sed -i -e '/ProtectHostname/d' -e '/ProtectKernelLogs/d' -e '/PrivateUsers=true/d' %{buildroot}%{_unitdir}/jellyfin.service
 %endif
 install -p -m 644 -D %{SOURCE18} %{buildroot}%{_sysusersdir}/jellyfin.conf
 
