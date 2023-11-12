@@ -2,14 +2,22 @@
 %global         debug_package %{nil}
 # Set .NET runtime identitfier string
 %ifarch aarch64
+%if 0%{?fedora}
 %define dotnet_rid fedora.%{fedora}-arm64
 %else
+%define dotnet_rid centos.%{rhel}-arm64
+%endif
+%else
+%if 0%{?fedora}
 %define dotnet_rid fedora.%{fedora}-x64
+%else
+%define dotnet_rid centos.%{rhel}-x64
+%endif
 %endif
 
 Name:           jellyfin
 Version:        10.8.12
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -45,7 +53,11 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
 # jellyfin-web
+%if 0%{?rhel} > 0
+BuildRequires:  npm
+%else
 BuildRequires:  nodejs-npm
+%endif
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
@@ -162,6 +174,11 @@ install -p -m 644 -D %{SOURCE16} %{buildroot}%{_prefix}/lib/firewalld/services/j
 install -p -m 640 -D %{SOURCE13} %{buildroot}%{_sysconfdir}/sudoers.d/jellyfin-sudoers
 install -p -m 644 -D %{SOURCE15} %{buildroot}%{_sysconfdir}/systemd/system/jellyfin.service.d/override.conf
 install -p -m 644 -D %{SOURCE11} %{buildroot}%{_unitdir}/jellyfin.service
+# EL8's systemd doesn't support ProtectHostname and ProtectKernelLogs
+# and fails to bind if PrivateUsers=true
+%if 0%{?rhel} > 0 && 0%{?rhel} < 9
+sed -i -e '/ProtectHostname/d' -e '/ProtectKernelLogs/d' -e '/PrivateUsers=true/d' %{buildroot}%{_unitdir}/jellyfin.service
+%endif
 install -p -m 644 -D %{SOURCE18} %{buildroot}%{_sysusersdir}/jellyfin.conf
 
 # empty directories
@@ -295,6 +312,10 @@ fi
 
 
 %changelog
+* Fri Nov 03 2023 Brian J. Murrell <brian@interlinx.bc.ca> - 10.8.12-2
+- Build on EL8; requires building with nodejs:16 module
+- Build on EL9
+
 * Sun Nov 05 2023 Michael Cronenworth <mike@cchtml.com> - 10.8.12-1
 - Update to 10.8.12
 
