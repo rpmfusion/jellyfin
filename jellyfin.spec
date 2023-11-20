@@ -2,9 +2,17 @@
 %global         debug_package %{nil}
 # Set .NET runtime identitfier string
 %ifarch aarch64
+%if 0%{?fedora}
 %define dotnet_rid fedora.%{fedora}-arm64
 %else
+%define dotnet_rid centos.%{rhel}-arm64
+%endif
+%else
+%if 0%{?fedora}
 %define dotnet_rid fedora.%{fedora}-x64
+%else
+%define dotnet_rid centos.%{rhel}-x64
+%endif
 %endif
 
 Name:           jellyfin
@@ -45,7 +53,7 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-6.0
 
 # jellyfin-web
-BuildRequires:  nodejs-npm
+BuildRequires:  npm >= 8
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
