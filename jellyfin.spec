@@ -3,15 +3,17 @@
 # Set .NET runtime identitfier string
 %if 0%{?fedora}
 %define dotnet_os fedora
+%define dotnet_os_ver %{fedora}
 %else
 %define dotnet_os centos
+%define dotnet_os_ver %{rhel}
 %endif
 %ifarch aarch64
 %define dotnet_arch arm64
 %else
 %define dotnet_arch x64
 %endif
-%define dotnet_rid %{dotnet_os}.%{fedora}-%{dotnet_arch}
+%define dotnet_rid %{dotnet_os}.%{dotnet_os_ver}-%{dotnet_arch}
 
 Name:           jellyfin
 Version:        10.8.13
