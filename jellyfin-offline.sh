@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JELLYFIN_VERSION=10.8.12
+JELLYFIN_VERSION=10.8.13
 DOTNET_VERSION=6.0.24
 DOTNET_HOST_VERSION=6.0.24
 
@@ -29,7 +29,7 @@ pushd jellyfin-web-${JELLYFIN_VERSION}
 mkdir jellyfin-npm
 npm config set cache ./jellyfin-npm
 npm i webpack
-echo y | npx browserslist@latest --update-db
+echo y | npx update-browserslist-db@latest
 npm i --package-lock-only
 npm ci
 tar -c -I 'xz -9 -T0' -f ../jellyfin-npm.tar.xz jellyfin-npm
