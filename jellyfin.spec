@@ -1,47 +1,29 @@
 # NuGet packages are stripped packages and no debug info for .NET binaries at this time
 %global         debug_package %{nil}
-# Set .NET runtime identitfier string
-%if 0%{?fedora}
-%define dotnet_os fedora
-%define dotnet_os_ver %{fedora}
-%else
-%define dotnet_os centos
-%define dotnet_os_ver %{rhel}
-%endif
-%ifarch aarch64
-%define dotnet_arch arm64
-%else
-%define dotnet_arch x64
-%endif
-%define dotnet_rid %{dotnet_os}.%{dotnet_os_ver}-%{dotnet_arch}
 
 Name:           jellyfin
-Version:        10.8.13
-Release:        2%{?dist}
+Version:        10.9.1
+Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
 Source0:        https://github.com/jellyfin/jellyfin/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/jellyfin/jellyfin-web/archive/v%{version}/%{name}-web-%{version}.tar.gz
 Source2:        %{name}-nupkgs.tar.xz
-Source3:        %{name}-nupkgs2.tar.xz
+Source3:        %{name}-nupkgs-system.tar.xz
 Source4:        %{name}-npm.tar.xz
 Source5:        %{name}-web-package-lock.json
 # Jellyfin uses dotnet and npm that both need the Internet to download dependencies.
 # Koji / Mock disable Internet access by default so download the required dependencies beforehand.
-# The following script requires the 'dotnet-sdk-6.0' and 'npm' packages be installed to run.
+# The following script requires the 'dotnet-sdk-8.0' and 'npm' packages be installed to run.
 Source10:       %{name}-offline.sh
 Source11:       %{name}.service
 Source12:       %{name}.env
 Source13:       %{name}.sudoers
-Source14:       restart.sh
-Source15:       %{name}.override.conf
-Source16:       %{name}-firewalld.xml
-Source17:       %{name}-server-lowports.conf
-Source18:       %{name}.sysusers
-
-# https://github.com/jellyfin/jellyfin/pull/10275
-Patch0:         %{name}-vaapi-sei.patch
+Source14:       %{name}.override.conf
+Source15:       %{name}-firewalld.xml
+Source16:       %{name}-server-lowports.conf
+Source17:       %{name}.sysusers
 
 # dotnet does not offer a runtime on ppc
 ExcludeArch:    %{power64} ppc64le %{arm}
@@ -49,8 +31,9 @@ ExcludeArch:    %{power64} ppc64le %{arm}
 %{?systemd_requires}
 %{?sysusers_requires_compat}
 BuildRequires:  firewalld-filesystem
+BuildRequires:  fontconfig
 BuildRequires:  systemd-rpm-macros
-BuildRequires:  dotnet-sdk-6.0
+BuildRequires:  dotnet-sdk-8.0
 
 # jellyfin-web
 BuildRequires:  npm >= 8
@@ -83,8 +66,8 @@ This package contains FirewallD files for Jellyfin.
 Summary:        The Free Software Media System Server backend
 Requires:       at
 Requires:       ffmpeg
-Requires:       aspnetcore-runtime-6.0
-Requires:       dotnet-runtime-6.0
+Requires:       aspnetcore-runtime-8.0
+Requires:       dotnet-runtime-8.0
 
 
 %description server
@@ -124,11 +107,9 @@ tar xf %{SOURCE4}
 cp -p %{SOURCE5} %{name}-web-%{version}/package-lock.json
 popd
 
-
 dotnet nuget add source %{_builddir}/jellyfin-nupkgs -n jellyfin-nupkgs
-dotnet nuget add source %{_builddir}/jellyfin-nupkgs2 -n jellyfin-nupkgs2
-dotnet nuget disable source nuget.org
-dotnet nuget disable source "NuGet official package source"
+dotnet nuget add source %{_builddir}/jellyfin-nupkgs-system -n jellyfin-nupkgs-system
+dotnet nuget disable source nuget
 
 
 %build
@@ -138,13 +119,14 @@ mkdir build-server
 dotnet publish --configuration Release \
                --output="build-server" \
                --self-contained false \
-               --runtime %{dotnet_rid} \
+               --runtime %{dotnet_runtime_id} \
                "-p:DebugSymbols=false;DebugType=none" \
                Jellyfin.Server
 cd ../%{name}-web-%{version}
 npm config set offline=true
 npm config set cache ../jellyfin-npm
 npm ci
+npm run build:production
 
 
 %install
@@ -159,7 +141,6 @@ tee %{buildroot}%{_bindir}/jellyfin << EOF
 exec %{_libdir}/jellyfin/jellyfin \${@}
 EOF
 chmod +x %{buildroot}%{_bindir}/jellyfin
-install -p -m 755 -D %{SOURCE14} %{buildroot}%{_libexecdir}/jellyfin/restart.sh
 
 # Jellyfin config
 install -p -m 644 -D Jellyfin.Server/Resources/Configuration/logging.json %{buildroot}%{_sysconfdir}/jellyfin/logging.json
@@ -192,7 +173,7 @@ ln -s %{_datadir}/jellyfin-web %{buildroot}%{_libdir}/jellyfin/jellyfin-web
 
 
 %check
-for TEST in Api Common Controller Dlna Extensions MediaEncoding.Hls MediaEncoding.Keyframes MediaEncoding Model Naming Providers Server.Implementations Server.Integration Server XbmcMetadata
+for TEST in Api Common Controller Extensions LiveTv MediaEncoding.Hls MediaEncoding.Keyframes MediaEncoding Model Naming Providers Server.Implementations Server.Integration Server XbmcMetadata
 do
   dotnet test tests/Jellyfin.$TEST.Tests/Jellyfin.$TEST.Tests.csproj \
             --configuration Release \
@@ -303,6 +284,9 @@ fi
 
 
 %changelog
+* Sun May 12 2024 Michael Cronenworth <mike@cchtml.com> - 10.9.1-1
+- Update to 10.9.1
+
 * Sat Feb 03 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 10.8.13-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
 

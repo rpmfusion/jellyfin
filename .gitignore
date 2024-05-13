@@ -1,4 +1,4 @@
 /jellyfin-*.tar.gz
 /jellyfin-npm.tar.xz
-/jellyfin-nupkgs2.tar.xz
 /jellyfin-nupkgs.tar.xz
+/jellyfin-nupkgs-system.tar.xz
