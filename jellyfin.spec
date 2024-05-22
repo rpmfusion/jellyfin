@@ -115,6 +115,8 @@ dotnet nuget disable source nuget
 %build
 # debug nuget signature verification error
 rpm -qf /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem
+ls -l /etc/pki/ca-trust/extracted/pem/
+rpm -vV ca-certificates
 grep 'DigiCert Assured ID Root CA' -A23 /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
