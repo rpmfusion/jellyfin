@@ -205,7 +205,6 @@ done
 %{_bindir}/jellyfin
 # Needs 755 else only root can run it since binary build by dotnet is 722
 %{_libdir}/jellyfin/
-%{_libexecdir}/jellyfin/
 
 # Jellyfin config
 %config(noreplace) %attr(644,jellyfin,jellyfin) %{_sysconfdir}/jellyfin/logging.json
