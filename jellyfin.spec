@@ -1,6 +1,10 @@
 # NuGet packages are stripped packages and no debug info for .NET binaries at this time
 %global         debug_package %{nil}
 
+%if 0%{?rhel}
+%global         dotnet_runtime_id  rhel.%{?rhel}-x64
+%endif
+
 Name:           jellyfin
 Version:        10.9.6
 Release:        1%{?dist}
