@@ -2,7 +2,12 @@
 %global         debug_package %{nil}
 
 %if 0%{?rhel}
-%global         dotnet_runtime_id  rhel.%{?rhel}-x64
+%ifarch aarch64
+%define         dotnet_arch arm64
+%else
+%define         dotnet_arch x64
+%endif
+%global         dotnet_runtime_id  rhel.%{?rhel}-%{dotnet_arch}
 %endif
 
 Name:           jellyfin
