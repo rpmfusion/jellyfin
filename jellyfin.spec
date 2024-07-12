@@ -12,7 +12,7 @@
 
 Name:           jellyfin
 Version:        10.9.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -74,7 +74,7 @@ This package contains FirewallD files for Jellyfin.
 # RPMfusion free
 Summary:        The Free Software Media System Server backend
 Requires:       at
-Requires:       ffmpeg
+Requires:       ffmpeg >= 4.4
 Requires:       aspnetcore-runtime-8.0
 Requires:       dotnet-runtime-8.0
 
@@ -300,6 +300,9 @@ fi
 
 
 %changelog
+* Fri Jul 12 2024 Brian J. Murrell <brian@interlinx.bc.ca> - 10.9.6-2
+- Add requirement of >= 4.4 for ffmpeg as that is what JF requires
+
 * Sun Jun 09 2024 Michael Cronenworth <mike@cchtml.com> - 10.9.6-1
 - Update to 10.9.6
 
