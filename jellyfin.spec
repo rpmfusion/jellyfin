@@ -11,7 +11,7 @@
 %endif
 
 Name:           jellyfin
-Version:        10.9.6
+Version:        10.9.7
 Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
@@ -45,7 +45,8 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-8.0
 
 # jellyfin-web
-BuildRequires:  npm >= 8
+BuildRequires:  nodejs >= 20.0.0
+BuildRequires:  nodejs-npm >= 9.6.4
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
@@ -74,7 +75,7 @@ This package contains FirewallD files for Jellyfin.
 # RPMfusion free
 Summary:        The Free Software Media System Server backend
 Requires:       at
-Requires:       ffmpeg
+Requires:       ffmpeg >= 4.4
 Requires:       aspnetcore-runtime-8.0
 Requires:       dotnet-runtime-8.0
 
@@ -300,6 +301,9 @@ fi
 
 
 %changelog
+* Sat Jul 13 2024 Michael Cronenworth <mike@cchtml.com> - 10.9.7-1
+- Update to 10.9.7
+
 * Sun Jun 09 2024 Michael Cronenworth <mike@cchtml.com> - 10.9.6-1
 - Update to 10.9.6
 
