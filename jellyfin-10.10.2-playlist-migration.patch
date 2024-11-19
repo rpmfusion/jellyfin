@@ -1,0 +1,35 @@
+From 51518b672af43c5d4fb21195546df31ee855fbf0 Mon Sep 17 00:00:00 2001
+From: Shadowghost <Ghost_of_Stone@web.de>
+Date: Sun, 17 Nov 2024 12:29:05 +0100
+Subject: [PATCH] Exclude file system based library playlists from migration
+
+---
+ .../Library/Resolvers/PlaylistResolver.cs                       | 2 +-
+ .../Migrations/Routines/RemoveDuplicatePlaylistChildren.cs      | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Emby.Server.Implementations/Library/Resolvers/PlaylistResolver.cs b/Emby.Server.Implementations/Library/Resolvers/PlaylistResolver.cs
+index a03c1214d6f..14798dda65f 100644
+--- a/Emby.Server.Implementations/Library/Resolvers/PlaylistResolver.cs
++++ b/Emby.Server.Implementations/Library/Resolvers/PlaylistResolver.cs
+@@ -28,7 +28,7 @@ protected override Playlist Resolve(ItemResolveArgs args)
+         {
+             if (args.IsDirectory)
+             {
+-                // It's a boxset if the path is a directory with [playlist] in its name
++                // It's a playlist if the path is a directory with [playlist] in its name
+                 var filename = Path.GetFileName(Path.TrimEndingDirectorySeparator(args.Path));
+                 if (string.IsNullOrEmpty(filename))
+                 {
+diff --git a/Jellyfin.Server/Migrations/Routines/RemoveDuplicatePlaylistChildren.cs b/Jellyfin.Server/Migrations/Routines/RemoveDuplicatePlaylistChildren.cs
+index 99047b2a2a6..f84bccc2582 100644
+--- a/Jellyfin.Server/Migrations/Routines/RemoveDuplicatePlaylistChildren.cs
++++ b/Jellyfin.Server/Migrations/Routines/RemoveDuplicatePlaylistChildren.cs
+@@ -46,6 +46,7 @@ public void Perform()
+             IncludeItemTypes = [BaseItemKind.Playlist]
+         })
+         .Cast<Playlist>()
++        .Where(p => !p.OpenAccess || !p.OwnerUserId.Equals(Guid.Empty))
+         .ToArray();
+ 
+         if (playlists.Length > 0)
