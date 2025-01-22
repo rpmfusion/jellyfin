@@ -11,7 +11,7 @@
 %endif
 
 Name:           jellyfin
-Version:        10.10.2
+Version:        10.10.4
 Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
@@ -33,9 +33,6 @@ Source14:       %{name}.override.conf
 Source15:       %{name}-firewalld.xml
 Source16:       %{name}-server-lowports.conf
 Source17:       %{name}.sysusers
-
-# https://github.com/jellyfin/jellyfin/pull/13059
-Patch0:         %{name}-10.10.2-playlist-migration.patch
 
 # dotnet does not offer a runtime on ppc
 ExcludeArch:    %{power64} ppc64le %{arm}
@@ -119,9 +116,6 @@ tar xf %{SOURCE3}
 tar xf %{SOURCE4}
 cp -p %{SOURCE5} %{name}-web-%{version}/package-lock.json
 popd
-
-# https://github.com/jellyfin/jellyfin/pull/13063
-sed -i 's/8.0.404/8.0.0/' global.json
 
 dotnet nuget add source %{_builddir}/jellyfin-nupkgs -n jellyfin-nupkgs
 dotnet nuget add source %{_builddir}/jellyfin-nupkgs-system -n jellyfin-nupkgs-system
@@ -307,6 +301,9 @@ fi
 
 
 %changelog
+* Wed Jan 22 2025 Michael Cronenworth <mike@cchtml.com> - 10.10.4-1
+- Update to 10.10.4
+
 * Mon Nov 18 2024 Michael Cronenworth <mike@cchtml.com> - 10.10.2-1
 - Update to 10.10.2
 
