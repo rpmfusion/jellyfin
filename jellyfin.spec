@@ -11,7 +11,7 @@
 %endif
 
 Name:           jellyfin
-Version:        10.10.5
+Version:        10.10.6
 Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
@@ -123,16 +123,8 @@ dotnet nuget disable source nuget
 
 
 %build
-# debug nuget signature verification error
-#rpm -qf /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem
-#ls -l /etc/pki/ca-trust/extracted/pem/
-#rpm -vV ca-certificates
-#grep 'DigiCert Assured ID Root CA' -A23 /etc/pki/ca-trust/extracted/pem/objsign-ca-bundle.pem
-
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-# https://bugzilla.rpmfusion.org/show_bug.cgi?id=6944
-export DOTNET_NUGET_SIGNATURE_VERIFICATION=false
 mkdir build-server
 dotnet publish --configuration Release \
                --output="build-server" \
@@ -301,6 +293,9 @@ fi
 
 
 %changelog
+* Thu Feb 27 2025 Michael Cronenworth <mike@cchtml.com> - 10.10.6-1
+- Update to 10.10.6
+
 * Sat Jan 25 2025 Michael Cronenworth <mike@cchtml.com> - 10.10.5-1
 - Update to 10.10.5
 
