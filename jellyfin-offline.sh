@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JELLYFIN_VERSION=10.11.2
+JELLYFIN_VERSION=10.11.3
 
 # Retrieve neccessary .NET NuGet packages for offline building
 tar xf jellyfin-${JELLYFIN_VERSION}.tar.gz
