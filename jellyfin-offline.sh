@@ -7,6 +7,9 @@ tar xf jellyfin-${JELLYFIN_VERSION}.tar.gz
 pushd jellyfin-${JELLYFIN_VERSION}
 mkdir jellyfin-nupkgs
 dotnet restore --packages ./jellyfin-nupkgs
+pushd jellyfin-nupkgs
+#for dir in *; do for ver in $(ls $dir); do echo "bundled(dotnet-$dir) = $ver" >> ../../jellyfin-rpm-bundled.txt; done; done
+popd
 mkdir jellyfin-nupkgs-system
 pushd jellyfin-nupkgs-system
 curl -L https://www.nuget.org/api/v2/package/runtime.any.System.Collections/4.3.0 > runtime.any.system.collections.4.3.0.nupkg
@@ -30,6 +33,7 @@ curl -L https://www.nuget.org/api/v2/package/runtime.unix.System.Net.Primitives/
 curl -L https://www.nuget.org/api/v2/package/runtime.unix.System.Private.Uri/4.3.0 > runtime.unix.system.private.uri.4.3.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/runtime.unix.System.Runtime.Extensions/4.3.0 > runtime.unix.system.runtime.extensions.4.3.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Private.Uri/4.3.0 > system.private.uri.4.3.0.nupkg
+#for nupkg in *; do echo "bundled(dotnet-${nupkg%.4.3.0.nupkg}) = 4.3.0" >> ../../jellyfin-rpm-bundled.txt; done
 
 popd
 tar -c -I 'xz -9 -T0 --memlimit-compress=50%' -f ../jellyfin-nupkgs.tar.xz jellyfin-nupkgs
@@ -51,3 +55,7 @@ tar -c -I 'xz -9 -T0 --memlimit-compress=50%' -f ../jellyfin-npm.tar.xz jellyfin
 cp -p package-lock.json ../jellyfin-web-package-lock.json
 popd
 
+# rpm bundled for registry.npmjs.org
+#grep resolved jellyfin-web-package-lock.json | grep -v github.com | sed 's/^[[:space:]]*"resolved": "https:\/\/registry.npmjs.org\///' | sort -u | awk -F'/-/' '{pkg = $1; sub(/\.tgz",$/, "",$2); base_pkg = pkg; sub("@.*/","",base_pkg); nvr = $2; sub(base_pkg"-","",nvr); print "bundled(nodejs-" pkg ") = " nvr;}' >> jellyfin-rpm-bundled.txt
+# rpm bundled for github.com
+#echo "bundled(nodejs-classlist.js) = 1.2.20180112" >> jellyfin-rpm-bundled.txt
