@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JELLYFIN_VERSION=10.11.3
+JELLYFIN_VERSION=10.11.4
 
 # Retrieve neccessary .NET NuGet packages for offline building
 tar xf jellyfin-${JELLYFIN_VERSION}.tar.gz
@@ -8,7 +8,7 @@ pushd jellyfin-${JELLYFIN_VERSION}
 mkdir jellyfin-nupkgs
 dotnet restore --packages ./jellyfin-nupkgs
 pushd jellyfin-nupkgs
-#for dir in *; do for ver in $(ls $dir); do echo "bundled(dotnet-$dir) = $ver" >> ../../jellyfin-rpm-bundled.txt; done; done
+#for dir in *; do for ver in $(ls $dir); do echo "Provides: bundled(dotnet-$dir) = $ver" >> ../../jellyfin-rpm-bundled.txt; done; done
 popd
 mkdir jellyfin-nupkgs-system
 pushd jellyfin-nupkgs-system
@@ -56,6 +56,6 @@ cp -p package-lock.json ../jellyfin-web-package-lock.json
 popd
 
 # rpm bundled for registry.npmjs.org
-#grep resolved jellyfin-web-package-lock.json | grep -v github.com | sed 's/^[[:space:]]*"resolved": "https:\/\/registry.npmjs.org\///' | sort -u | awk -F'/-/' '{pkg = $1; sub(/\.tgz",$/, "",$2); base_pkg = pkg; sub("@.*/","",base_pkg); nvr = $2; sub(base_pkg"-","",nvr); print "bundled(nodejs-" pkg ") = " nvr;}' >> jellyfin-rpm-bundled.txt
+#grep resolved jellyfin-web-package-lock.json | grep -v github.com | sed 's/^[[:space:]]*"resolved": "https:\/\/registry.npmjs.org\///' | sort -u | awk -F'/-/' '{pkg = $1; sub(/\.tgz",$/, "",$2); base_pkg = pkg; sub("@.*/","",base_pkg); nvr = $2; sub(base_pkg"-","",nvr); print "Provides: bundled(nodejs-" pkg ") = " nvr;}' >> jellyfin-rpm-bundled.txt
 # rpm bundled for github.com
-#echo "bundled(nodejs-classlist.js) = 1.2.20180112" >> jellyfin-rpm-bundled.txt
+#echo "Provides: bundled(nodejs-classlist.js) = 1.2.20180112" >> jellyfin-rpm-bundled.txt
