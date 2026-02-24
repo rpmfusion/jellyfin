@@ -48,7 +48,11 @@ BuildRequires:  dotnet-sdk-9.0
 
 # jellyfin-web
 BuildRequires:  nodejs >= 20.0.0
+%if 0%{?rhel}
+BuildRequires:  npm >= 9.6.4
+%else
 BuildRequires:  nodejs-npm >= 9.6.4
+%endif
 
 Requires: %{name}-server = %{version}-%{release}
 Requires: %{name}-web = %{version}-%{release}
