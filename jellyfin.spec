@@ -1,13 +1,22 @@
 # NuGet packages are stripped packages and no debug info for .NET binaries at this time
 %global         debug_package %{nil}
 
-%if 0%{?rhel}
+# Fedora has dotnet_runtime_id macro
+%if ! 0%{?dotnet_runtime_id:1}
 %ifarch aarch64
 %define         dotnet_arch arm64
 %else
 %define         dotnet_arch x64
 %endif
+%if 0%{?almalinux}
+%global         dotnet_runtime_id  almalinux.%{?rhel}-%{dotnet_arch}
+%elif 0%{?rocky}
+%global         dotnet_runtime_id  rocky.%{?rhel}-%{dotnet_arch}
+%elif 0%{?centos}
 %global         dotnet_runtime_id  centos.%{?rhel}-%{dotnet_arch}
+%else
+%global         dotnet_runtime_id  rhel.%{?rhel}-%{dotnet_arch}
+%endif
 %endif
 
 Name:           jellyfin
