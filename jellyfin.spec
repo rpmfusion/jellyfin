@@ -20,7 +20,7 @@
 %endif
 
 Name:           jellyfin
-Version:        10.11.10
+Version:        10.11.11
 Release:        1%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
@@ -308,6 +308,9 @@ fi
 
 
 %changelog
+* Mon Jun 08 2026 Michael Cronenworth <mike@cchtml.com> - 10.11.11-1
+- Update to 10.11.11
+
 * Sun May 24 2026 Michael Cronenworth <mike@cchtml.com> - 10.11.10-1
 - Update to 10.11.10
 
