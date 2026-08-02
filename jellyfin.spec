@@ -21,7 +21,7 @@
 
 Name:           jellyfin
 Version:        10.11.11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -308,6 +308,9 @@ fi
 
 
 %changelog
+* Sun Aug 02 2026 RPM Fusion Release Engineering <leigh123linux@rpmfusion.org> - 10.11.11-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_45_Mass_Rebuild
+
 * Mon Jun 08 2026 Michael Cronenworth <mike@cchtml.com> - 10.11.11-1
 - Update to 10.11.11
 
