@@ -20,13 +20,13 @@
 %endif
 
 Name:           jellyfin
-Version:        10.11.11
-Release:        2%{?dist}
+Version:        12.0
+Release:        0.1.rc4%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
-Source0:        https://github.com/jellyfin/jellyfin/archive/v%{version}/%{name}-%{version}.tar.gz
-Source1:        https://github.com/jellyfin/jellyfin-web/archive/v%{version}/%{name}-web-%{version}.tar.gz
+Source0:        https://github.com/jellyfin/jellyfin/archive/v%{version}/%{name}-%{version}-rc4.tar.gz
+Source1:        https://github.com/jellyfin/jellyfin-web/archive/v%{version}/%{name}-web-%{version}-rc4.tar.gz
 Source2:        %{name}-nupkgs.tar.xz
 Source3:        %{name}-nupkgs-system.tar.xz
 Source4:        %{name}-npm.tar.xz
@@ -53,14 +53,14 @@ ExcludeArch:    %{power64} ppc64le %{arm}
 BuildRequires:  firewalld-filesystem
 BuildRequires:  fontconfig
 BuildRequires:  systemd-rpm-macros
-BuildRequires:  dotnet-sdk-9.0
+BuildRequires:  dotnet-sdk-10.0
 
 # jellyfin-web
-BuildRequires:  nodejs >= 20.0.0
+BuildRequires:  nodejs24
 %if 0%{?rhel}
-BuildRequires:  npm >= 9.6.4
+BuildRequires:  npm >= 11.0.0
 %else
-BuildRequires:  nodejs-npm >= 9.6.4
+BuildRequires:  nodejs24-npm
 %endif
 
 Requires: %{name}-server = %{version}-%{release}
@@ -91,8 +91,8 @@ This package contains FirewallD files for Jellyfin.
 Summary:        The Free Software Media System Server backend
 Requires:       at
 Requires:       ffmpeg >= 7.1
-Requires:       aspnetcore-runtime-9.0
-Requires:       dotnet-runtime-9.0
+Requires:       aspnetcore-runtime-10.0
+Requires:       dotnet-runtime-10.0
 
 
 %description server
@@ -124,12 +124,12 @@ The Jellyfin media server web frontend.
 
 
 %prep
-%autosetup -p1 -b 1
+%autosetup -p1 -b 1 -n %{name}-%{version}-rc4
 pushd ..
 tar xf %{SOURCE2}
 tar xf %{SOURCE3}
 tar xf %{SOURCE4}
-cp -p %{SOURCE5} %{name}-web-%{version}/package-lock.json
+cp -p %{SOURCE5} %{name}-web-%{version}-rc4/package-lock.json
 popd
 
 dotnet nuget add source %{_builddir}/jellyfin-nupkgs -n jellyfin-nupkgs
@@ -147,7 +147,7 @@ dotnet publish --configuration Release \
                --runtime %{dotnet_runtime_id} \
                "-p:DebugSymbols=false;DebugType=none" \
                Jellyfin.Server
-cd ../%{name}-web-%{version}
+cd ../%{name}-web-%{version}-rc4
 npm config set offline=true
 npm config set cache ../jellyfin-npm
 npm ci
@@ -187,10 +187,10 @@ mkdir -p %{buildroot}%{_localstatedir}/log/jellyfin
 # jellyfin-server-lowports subpackage
 install -p -m 644 -D %{SOURCE16} %{buildroot}%{_unitdir}/jellyfin.service.d/jellyfin-server-lowports.conf
 
-cd ../%{name}-web-%{version}
+cd ../%{name}-web-%{version}-rc4
 # move web licenses prior to installation
-mv dist/*.js.LICENSE.txt ../jellyfin-%{version}/
-mv dist/libraries/*.js.LICENSE.txt ../jellyfin-%{version}/
+mv dist/*.js.LICENSE.txt ../jellyfin-%{version}-rc4/
+mv dist/libraries/*.js.LICENSE.txt ../jellyfin-%{version}-rc4/
 mkdir -p %{buildroot}%{_datadir}/
 mv dist %{buildroot}%{_datadir}/jellyfin-web/
 # allow easier usage outside service file
@@ -308,6 +308,9 @@ fi
 
 
 %changelog
+* Tue Aug 04 2026 Michael Cronenworth <mike@cchtml.com> - 12.0-0.1.rc4
+- Update to 12.0-rc4
+
 * Sun Aug 02 2026 RPM Fusion Release Engineering <leigh123linux@rpmfusion.org> - 10.11.11-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_45_Mass_Rebuild
 
