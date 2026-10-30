@@ -19,9 +19,12 @@
 %endif
 %endif
 
+# Set the major nodejs version
+%global         nodejs_major 24
+
 Name:           jellyfin
 Version:        12.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -56,11 +59,18 @@ BuildRequires:  systemd-rpm-macros
 BuildRequires:  dotnet-sdk-10.0
 
 # jellyfin-web
-BuildRequires:  nodejs24
-%if 0%{?rhel}
+# el9 uses module packages, everyone else uses versioned packages
+%if 0%{?rhel} == 9
+BuildRequires:  nodejs >= %{nodejs_major}.0.0
 BuildRequires:  npm >= 11.0.0
 %else
-BuildRequires:  nodejs24-npm
+BuildRequires:  nodejs%{nodejs_major}
+BuildRequires:  nodejs%{nodejs_major}-npm
+# explicitly require -bin packages on fedora
+%if 0%{?fedora}
+BuildRequires:  nodejs%{nodejs_major}-bin
+BuildRequires:  nodejs%{nodejs_major}-npm-bin
+%endif
 %endif
 
 Requires: %{name}-server = %{version}-%{release}
@@ -138,6 +148,17 @@ dotnet nuget disable source nuget
 
 
 %build
+# Fedora automatically pulls nodejs*-npm-bin. EL10 does not have an equivalent.
+%if 0%{?rhel} >= 10
+node_bin_dir="$(pwd)/.nodejs-bin"
+mkdir -p "$node_bin_dir"
+
+ln -s %{_bindir}/npm-%{nodejs_major} "$node_bin_dir/npm"
+ln -s %{_bindir}/node-%{nodejs_major} "$node_bin_dir/node"
+
+export PATH="$node_bin_dir:$PATH"
+%endif
+
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 mkdir build-server
@@ -308,6 +329,9 @@ fi
 
 
 %changelog
+* Thu Oct 29 2026 Louis Abel <tucklesepk@gmail.com> - 12.4-2
+- Add el9+ support
+
 * Thu Oct 29 2026 Michael Cronenworth <mike@cchtml.com> - 12.4-1
 - Update to 12.4
 
