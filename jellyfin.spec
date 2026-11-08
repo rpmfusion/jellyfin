@@ -21,7 +21,7 @@
 
 Name:           jellyfin
 Version:        12.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Free Software Media System
 License:        GPL-2.0-only
 URL:            https://jellyfin.org
@@ -44,6 +44,8 @@ Source14:       %{name}.override.conf
 Source15:       %{name}-firewalld.xml
 Source16:       %{name}-server-lowports.conf
 Source17:       %{name}.sysusers
+
+Patch0:         18573.patch
 
 # dotnet does not offer a runtime on ppc
 ExcludeArch:    %{power64} ppc64le %{arm}
@@ -308,6 +310,9 @@ fi
 
 
 %changelog
+* Sun Nov 08 2026 Hoshino Lina <lina@lina.yt> - 12.4-2
+- Backport upstream patch to fix attachment extraction
+
 * Thu Oct 29 2026 Michael Cronenworth <mike@cchtml.com> - 12.4-1
 - Update to 12.4
 
